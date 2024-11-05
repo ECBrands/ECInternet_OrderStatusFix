@@ -4,9 +4,21 @@ declare(strict_types=1);
 
 namespace ECInternet\OrderStatusFix\Controller\Adminhtml\Order;
 
+use Magento\Backend\App\Action;
 use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\Response\Http\FileFactory;
+use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Framework\Controller\Result\RawFactory;
+use Magento\Framework\Registry;
+use Magento\Framework\Translate\InlineInterface;
+use Magento\Framework\View\Result\LayoutFactory;
+use Magento\Framework\View\Result\PageFactory;
 use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Sales\Api\OrderManagementInterface;
+use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order\Email\Sender\OrderCommentSender;
+use Psr\Log\LoggerInterface;
+use ECInternet\OrderStatusFix\Model\Config;
 
 /**
  * Class AddComment
@@ -26,6 +38,58 @@ class AddComment extends \Magento\Sales\Controller\Adminhtml\Order implements Ht
      * ACL resource needed to send comment email notification
      */
     public const ADMIN_SALES_EMAIL_RESOURCE = 'Magento_Sales::emails';
+
+    /**
+     * @var \ECInternet\OrderStatusFix\Model\Config
+     */
+    private $config;
+
+    /**
+     * AddComment constructor.
+     *
+     * @param \Magento\Backend\App\Action\Context              $context
+     * @param \Magento\Framework\Registry                      $coreRegistry
+     * @param \Magento\Framework\App\Response\Http\FileFactory $fileFactory
+     * @param \Magento\Framework\Translate\InlineInterface     $translateInline
+     * @param \Magento\Framework\View\Result\PageFactory       $resultPageFactory
+     * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
+     * @param \Magento\Framework\View\Result\LayoutFactory     $resultLayoutFactory
+     * @param \Magento\Framework\Controller\Result\RawFactory  $resultRawFactory
+     * @param \Magento\Sales\Api\OrderManagementInterface      $orderManagement
+     * @param \Magento\Sales\Api\OrderRepositoryInterface      $orderRepository
+     * @param \Psr\Log\LoggerInterface                         $logger
+     * @param \ECInternet\OrderStatusFix\Model\Config          $config
+     */
+    public function __construct(
+        Action\Context $context,
+        Registry $coreRegistry,
+        FileFactory $fileFactory,
+        InlineInterface $translateInline,
+        PageFactory $resultPageFactory,
+        JsonFactory $resultJsonFactory,
+        LayoutFactory $resultLayoutFactory,
+        RawFactory $resultRawFactory,
+        OrderManagementInterface $orderManagement,
+        OrderRepositoryInterface $orderRepository,
+        LoggerInterface $logger,
+        Config $config
+    ) {
+        parent::__construct(
+            $context,
+            $coreRegistry,
+            $fileFactory,
+            $translateInline,
+            $resultPageFactory,
+            $resultJsonFactory,
+            $resultLayoutFactory,
+            $resultRawFactory,
+            $orderManagement,
+            $orderRepository,
+            $logger
+        );
+
+        $this->config = $config;
+    }
 
     /**
      * Add order comment action
@@ -81,7 +145,6 @@ class AddComment extends \Magento\Sales\Controller\Adminhtml\Order implements Ht
         return $this->resultRedirectFactory->create()->setPath('sales/*/');
     }
 
-
     /**
      * Get order status to set
      *
@@ -96,10 +159,13 @@ class AddComment extends \Magento\Sales\Controller\Adminhtml\Order implements Ht
             return $historyStatus;
         }
 
-        $statuses = $config->getStateStatuses($order->getState());
+        // Only perform check if the configuration is not set to allow any order status change
+        if (!$this->config->isAllowAnyOrderStatusChange()) {
+            $statuses = $config->getStateStatuses($order->getState());
 
-        if (!isset($statuses[$historyStatus])) {
-            return $order->getDataByKey('status');
+            if (!isset($statuses[$historyStatus])) {
+                return $order->getDataByKey('status');
+            }
         }
 
         return $historyStatus;
