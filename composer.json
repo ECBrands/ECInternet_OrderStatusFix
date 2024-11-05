@@ -1,0 +1,21 @@
+{
+    "name": "ecinternet/order-status-fix",
+    "description": "Simple Magento 2.4.7 patch for ACP2E-3130",
+    "require": {
+        "magento/framework": "*"
+    },
+    "type": "magento2-module",
+    "version": "1.0.0",
+    "license": [
+        "OSL-3.0",
+        "AFL-3.0"
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "ECInternet\\OrderStatusFix\\": ""
+        }
+    }
+}
