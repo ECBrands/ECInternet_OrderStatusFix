@@ -2,9 +2,10 @@
     "name": "ecinternet/order-status-fix",
     "description": "Simple Magento 2.4.7 patch for ACP2E-3130",
     "require": {
-        "magento/framework": "*"
+        "magento/module-sales": "103.0.7-p1"
     },
     "type": "magento2-module",
+    "version": "1.1.0",
     "license": [
         "OSL-3.0",
         "AFL-3.0"
