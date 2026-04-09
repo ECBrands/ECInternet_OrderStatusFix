@@ -49,7 +49,7 @@ class OrderServicePlugin
         OrderCommentSender $orderCommentSender,
         OrderRepositoryInterface $orderRepository,
         Config $config,
-        OrderConfig $orderConfig = null
+        ?OrderConfig $orderConfig = null
     ) {
         $this->orderCommentSender = $orderCommentSender;
         $this->orderRepository    = $orderRepository;
