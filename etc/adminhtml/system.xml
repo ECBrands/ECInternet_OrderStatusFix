@@ -13,6 +13,11 @@
 					<label>Allow any order status change</label>
 					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
 				</field>
+				<field id="disable_shipment_state_update" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+					<label>Disable automatic state/status update on shipment for new orders</label>
+					<comment>When enabled, creating a shipment will not automatically change the state and status of orders in the "New" state.</comment>
+					<source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+				</field>
 			</group>
         </section>
 	</system>

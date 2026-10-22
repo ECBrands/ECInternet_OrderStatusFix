@@ -65,6 +65,9 @@ class OrderServicePlugin
      *
      * @return bool
      * @throws \Magento\Framework\Exception\LocalizedException
+     *
+     * @noinspection PhpMissingParamTypeInspection
+     * @noinspection PhpUnusedParameterInspection
      */
     public function aroundAddComment(OrderService $subject, callable $proceed, $id, OrderStatusHistoryInterface $statusHistory): bool
     {

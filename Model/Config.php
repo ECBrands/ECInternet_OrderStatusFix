@@ -13,6 +13,8 @@ class Config
 {
     private const CONFIG_PATH_ALLOW_ANY_ORDER_STATUS_CHANGE = 'order_status_fix/general/allow_any_order_status_change';
 
+    private const CONFIG_PATH_DISABLE_SHIPMENT_STATE_UPDATE = 'order_status_fix/general/disable_shipment_state_update';
+
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
@@ -32,5 +34,10 @@ class Config
     public function isAllowAnyOrderStatusChange()
     {
         return $this->scopeConfig->isSetFlag(self::CONFIG_PATH_ALLOW_ANY_ORDER_STATUS_CHANGE);
+    }
+
+    public function isDisableShipmentStateUpdate()
+    {
+        return $this->scopeConfig->isSetFlag(self::CONFIG_PATH_DISABLE_SHIPMENT_STATE_UPDATE);
     }
 }
